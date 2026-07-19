@@ -11,44 +11,50 @@
  */
 class Solution {
 public:
-    void createGraph(TreeNode *root,unordered_map<TreeNode*,vector<TreeNode*>>&mp,TreeNode *&sNode,int start){
+    void createGraph(TreeNode *root,unordered_map<TreeNode*,vector<TreeNode*>>&adj,TreeNode *&startNode,int start){
+        if(!root)
+            return;
         queue<TreeNode*>q;
         q.push(root);
         while(!q.empty()){
             TreeNode *node=q.front();q.pop();
             if(node->val==start)
-                sNode=node;
+                startNode=node;
             if(node->left){
                 q.push(node->left);
-                mp[node].push_back(node->left);
-                mp[node->left].push_back(node);
+                adj[node].push_back(node->left);
+                adj[node->left].push_back(node);
             }
             if(node->right){
                 q.push(node->right);
-                mp[node].push_back(node->right);
-                mp[node->right].push_back(node);
+                adj[node].push_back(node->right);
+                adj[node->right].push_back(node);
             }
         }
     }
     int amountOfTime(TreeNode* root, int start) {
-        unordered_map<TreeNode*,vector<TreeNode*>>mp;
-        TreeNode *sNode;
-        createGraph(root,mp,sNode,start); 
-        unordered_set<TreeNode*>vis;
+        unordered_map<TreeNode*,vector<TreeNode*>>adj;
+        TreeNode *startNode=nullptr;
+        createGraph(root,adj,startNode,start);
+        if(!startNode)
+            return 0;
+        int time=0;
+
         queue<pair<int,TreeNode*>>q;
-        q.push({0,sNode});
-        vis.insert(sNode);
-        int ans=0;
+        unordered_set<TreeNode*>vis;
+        q.push({0,startNode});
+        vis.insert(startNode);
+
         while(!q.empty()){
-            auto [time,node]=q.front();q.pop();
-            ans=max(ans,time);
-            for(auto nei:mp[node]){
-                if(vis.find(nei)==vis.end()){
-                    q.push({time+1,nei});
-                    vis.insert(nei);
+            auto [curT,node]=q.front();q.pop();
+            time=curT;
+            for(auto ne:adj[node]){
+                if(vis.find(ne)==vis.end()){
+                    q.push({curT+1,ne});
+                    vis.insert(ne);
                 }
             }
-        } 
-        return ans;
+        }
+        return time;
     }
 };
