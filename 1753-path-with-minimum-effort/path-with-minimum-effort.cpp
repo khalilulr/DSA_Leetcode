@@ -17,6 +17,9 @@ public:
             if(r==n-1 && c==m-1)
                 return eff;
 
+                
+            if(eff>dist[r][c])
+                continue;
 
             for(int i=0;i<4;i++){
                 int nr=ro[i]+r;
