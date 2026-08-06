@@ -1,43 +1,41 @@
 class Solution {
 public:
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        multiset<int>st;
-        for(auto el:nums1)
-            st.insert(el);
-        for(auto el:nums2)
-            st.insert(el);
-        int n = st.size();
+        // x y | z
+        // p q | r
 
-        if (n % 2 == 1) {
+        //y<r && z>q
+        //y>r==> 
 
-            int cnt = 0;
 
-            for (int x : st) {
-                if (cnt == n / 2)
-                    return x;
-                cnt++;
-            }
+        int n=nums1.size(),m=nums2.size();
+        if(n>m)
+           return findMedianSortedArrays(nums2,nums1);
 
-        }
-        else {
+        int totalMid= (n + m + 1) /2;
+        int l=0,h=n;
 
-            int cnt = 0;
-            int first = 0, second = 0;
+        while(l<=h){
+            int mid1=l + (h-l)/2;
+            int mid2=totalMid-mid1;
 
-            for (int x : st) {
+            int y=mid1==0?INT_MIN:nums1[mid1-1];
+            int z=mid1==n?INT_MAX:nums1[mid1];
+            int q=mid2==0?INT_MIN:nums2[mid2-1];
+            int r=mid2==m?INT_MAX:nums2[mid2];
 
-                if (cnt == n / 2 - 1)
-                    first = x;
 
-                if (cnt == n / 2) {
-                    second = x;
-                    break;
+            if(y<=r && z>=q){
+                if((n+m)%2==0){
+                    return double(max(y,q) + min(z,r)) /2.0;
+                }else{
+                    return max(y,q)/1.0;
                 }
-
-                cnt++;
             }
 
-            return (first + second) / 2.0;
+            if(y>r)
+                h=mid1-1;
+            else l=mid1+1;
         }
         return 0.00;
     }
