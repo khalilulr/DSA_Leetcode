@@ -9,14 +9,14 @@ public:
             adj[src].push_back({dest,cost});
         }
 
-        queue<tuple<int,int,int>>pq;
+        priority_queue<tuple<int,int,int>,vector<tuple<int,int,int>>,greater<>>pq;
         vector<int>dist(n,1e9);
 
         pq.push({0,src,0});  //stops , node, node;
         dist[src]=0;
 
         while(!pq.empty()){
-            auto [stops,node,cost]=pq.front();pq.pop();
+            auto [stops,node,cost]=pq.top();pq.pop();
             // if(node==dst)
             //     return cost;
 
