@@ -25,10 +25,10 @@ public:
                 curSum+=ptr2->val;
                 ptr2=ptr2->next;
             }
-            if(curSum>=10){
-                carry=curSum/10;
-                curSum=curSum%10;
-            }else carry=0;
+
+            carry=curSum/10;
+            curSum=curSum%10;
+            
             ListNode *node=new ListNode(curSum);
             cur->next=node;
             cur=node;
