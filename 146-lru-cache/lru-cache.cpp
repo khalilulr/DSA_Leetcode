@@ -1,111 +1,98 @@
-class Node {
-public:
-    int key;
-    int value;
-    Node* next;
-    Node* prev;
-
-    Node(int key, int value) {
-        this->key = key;
-        this->value = value;
-        this->next = nullptr;
-        this->prev = nullptr;
-    }
+class Node{
+    public:
+        Node *prev,*next;
+        int value;
+        int key;
+        Node(int value,int key){
+            this->value=value;
+            this->key=key;
+            this->prev=nullptr;
+            this->next=nullptr;
+        }
 };
 
 class LRUCache {
-    Node* head;
-    Node* tail;
-    unordered_map<int, Node*> mp;
+    Node *head,*tail;
+    unordered_map<int,Node*>mp;
     int capacity;
 
-    // Remove a node from wherever it currently is
-    void removeNode(Node* node) {
-        Node* prevNode = node->prev;
-        Node* nextNode = node->next;
+    void removeNode(Node *node){
+        Node *prevNode=node->prev;
+        Node *nxtNode=node->next;
 
-        prevNode->next = nextNode;
-        nextNode->prev = prevNode;
+        prevNode->next=nxtNode;
+        nxtNode->prev=prevNode;
     }
 
-    // Add node immediately after head
-    void addNodeFront(Node* node) {
-        Node* headNextNode = head->next;
-
-        head->next = node;
-        node->prev = head;
-
-        node->next = headNextNode;
-        headNextNode->prev = node;
-    }
-
-    // Remove least recently used node
-    void removeEndNode() {
-        Node* toDel = tail->prev;
-
-        // Cache is empty
-        if (toDel == head)
+    void removeNodeEnd(){
+        Node *endNode=tail->prev;
+        if(endNode==head)
             return;
 
-        // Remove from linked list
-        removeNode(toDel);
+        mp.erase(endNode->key);
 
-        // Remove from hashmap
-        mp.erase(toDel->key);
+        Node *prevEndNode=endNode->prev;
+        prevEndNode->next=tail;
+        tail->prev=prevEndNode;
 
-        // Delete node
-        delete toDel;
+        delete(endNode);
     }
 
+    void addNodeStart(Node *node){
+        Node *headNext=head->next;
+        head->next=node;
+        node->prev=head;
+
+        node->next=headNext;
+        headNext->prev=node;
+    }
 public:
     LRUCache(int capacity) {
-        this->capacity = capacity;
+        this->capacity=capacity;
+        head=new Node(-1,-1);
+        tail=new Node(-1,-1);
 
-        head = new Node(-1, -1);
-        tail = new Node(-1, -1);
-
-        head->next = tail;
-        tail->prev = head;
+        head->next=tail;
+        tail->prev=head;
     }
-
+    
     int get(int key) {
-        // Key doesn't exist
-        if (mp.find(key) == mp.end())
+        if(mp.find(key)==mp.end())
             return -1;
+        
+        Node *node=mp[key];
 
-        Node* node = mp[key];
-
-        // Move to front because it was recently used
         removeNode(node);
-        addNodeFront(node);
+        addNodeStart(node);
 
         return node->value;
     }
-
+    
     void put(int key, int value) {
-        // Case 1: Key already exists
-        if (mp.find(key) != mp.end()) {
-            Node* node = mp[key];
+        if(mp.find(key)!=mp.end()){
+            Node *node=mp[key];
+            node->value=value;
+            node->key=key;
 
-            // Update value
-            node->value = value;
-
-            // Move to front
             removeNode(node);
-            addNodeFront(node);
-
-            return;
+            addNodeStart(node);
+        }else{
+            Node *node=new Node(value,key);
+            if(mp.size()==capacity){
+                removeNodeEnd();
+                mp[key]=node;
+                addNodeStart(node);
+            }else{
+                mp[key]=node;
+                addNodeStart(node);
+            }
         }
-
-        // Case 2: Cache is full
-        if (mp.size() == capacity) {
-            removeEndNode();
-        }
-
-        // Case 3: Insert new node
-        Node* node = new Node(key, value);
-
-        mp[key] = node;
-        addNodeFront(node);
     }
 };
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
