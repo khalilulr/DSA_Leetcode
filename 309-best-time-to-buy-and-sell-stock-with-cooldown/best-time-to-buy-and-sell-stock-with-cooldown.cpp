@@ -7,13 +7,12 @@ public:
         for(int i=n-1;i>=0;i--){
             for(int j=0;j<2;j++){
                 if(j==0){
-                    dp[i][j]=max(-prices[i]+dp[i+1][1],dp[i+1][0]);
+                    dp[i][j]=max(dp[i+1][j],dp[i+1][1]-prices[i]);
                 }else{
-                        dp[i][j]=max(prices[i]+dp[i+2][0],dp[i+1][1]);
+                        dp[i][j]=max(dp[i+1][j],dp[i+2][0]+prices[i]);
                 }
             }
         }
-
         return dp[0][0];
     }
 };
