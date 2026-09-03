@@ -1,30 +1,32 @@
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        // b-->a
-        unordered_map<int,vector<int>>adj;
-        vector<int>inEdge(numCourses,0);
-        for(auto pre:prerequisites){
-            int u=pre[0],v=pre[1];
-            //v-->u
-            inEdge[u]++;
-            adj[v].push_back(u);
-        }
+        //1-->0
         queue<int>q;
-        vector<int>ord;
+        vector<int>inEdge(numCourses,0);
+        unordered_map<int,vector<int>>adj;
+        for(auto req:prerequisites){
+            int u=req[0],v=req[1];
+            adj[u].push_back(v);
+            inEdge[v]++;
+        }
+
         for(int i=0;i<numCourses;i++){
             if(inEdge[i]==0)
                 q.push(i);
         }
+
+        vector<int>ans;
         while(!q.empty()){
-            int course=q.front();q.pop();
-            ord.push_back(course);
-            for(auto ne:adj[course]){
-                inEdge[ne]--;
-                if(inEdge[ne]==0)
-                    q.push(ne);
+            int node=q.front();q.pop();
+            ans.push_back(node);
+            for(auto nei:adj[node]){
+                inEdge[nei]--;
+                if(inEdge[nei]==0)
+                    q.push(nei);
             }
         }
-        return ord.size()==numCourses;
+
+        return ans.size()==numCourses?true:false;
     }
 };
