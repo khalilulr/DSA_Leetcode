@@ -1,31 +1,29 @@
 class Solution {
 public:
     int characterReplacement(string s, int k) {
-        // priority_queue<pair<int,char>>pq;
-        vector<int>freq(26,0);
-        int i=0;
-        int ans=0;
-        int n=s.size();
-        for(int j=0;j<n;j++){
-           int idx=s[j]-'A';
-           freq[idx]++;
-           int maxF=0;
+        int l=0,n=s.size(),ans=0;
+        priority_queue<pair<int,char>>pq;
+        unordered_map<char,int>mp;
 
-           for(int i=0;i<26;i++)
-                maxF=max(maxF,freq[i]);
+        for(int r=0;r<n;r++){
+            char ch=s[r];
+            mp[ch]++;;
+            pq.push({mp[ch],ch});
 
-            if(j-i+1 - maxF <= k)
-                ans=max(ans,j-i+1);
-            else{
-                while(i<j && j-i+1 - maxF > k){
-                    int idx=s[i]-'A';
-                    freq[idx]--;
-                    for(int i=0;i<26;i++)
-                        maxF=max(maxF,freq[i]);
-                    i++;
-                }
+
+            while(l<r && r-l+1-pq.top().first > k ){
+                mp[s[l]]--;
+                l++;
+                vector<pair<char,int>>temp;
+                while(!pq.empty())
+                    pq.pop();
+                for(auto [el,fr]:mp)
+                    pq.push({fr,el});
             }
-        }   
+
+            ans=max(ans,r-l+1);
+        }
+
         return ans;
     }
 };
