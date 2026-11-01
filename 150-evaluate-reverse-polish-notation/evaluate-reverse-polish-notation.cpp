@@ -1,33 +1,31 @@
 class Solution {
 public:
     int evalRPN(vector<string>& tokens) {
-        stack<int> st;
+        stack<int>st;
 
-        for (string token : tokens) {
+        for(auto token:tokens){
+            if(token=="*" || token=="/" ||  token=="-" || token=="+"){
+                if(st.size()<2)
+                    return -1;
 
-            if (token != "+" && token != "-" &&
-                token != "*" && token != "/") {
+                double cur=st.top();st.pop();
+                double prev=st.top();st.pop();
 
+                double result;
+                if(token=="/"){
+                    result=prev/cur;
+                }else if(token=="*")
+                    result=prev*cur;
+                else if(token=="+")
+                    result=prev+cur;
+                else result = prev - cur;
+
+                st.push(result);
+            }else {
                 st.push(stoi(token));
             }
-            else {
-                int num2 = st.top();
-                st.pop();
-
-                int num1 = st.top();
-                st.pop();
-
-                if (token == "+")
-                    st.push(num1 + num2);
-                else if (token == "-")
-                    st.push(num1 - num2);
-                else if (token == "*")
-                    st.push(num1 * num2);
-                else
-                    st.push(num1 / num2);
-            }
         }
-
         return st.top();
+
     }
 };
