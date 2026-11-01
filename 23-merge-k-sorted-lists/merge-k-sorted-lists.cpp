@@ -11,22 +11,25 @@
 class Solution {
 public:
     ListNode* mergeKLists(vector<ListNode*>& lists) {
-        ListNode *node=new ListNode(-1);
-        ListNode *cur=node;
         priority_queue<pair<int,ListNode*>,vector<pair<int,ListNode*>>,greater<>>pq;
+
         for(auto list:lists){
             if(list)
-             pq.push({list->val,list});
+            pq.push({list->val,list});
         }
+
+        ListNode *head=new ListNode(-1);
+        ListNode *ptr=head;
         while(!pq.empty()){
-            auto [val,node]=pq.top();pq.pop();
-            cur->next=node;
-            cur=node;
+            ListNode *node=pq.top().second;
+            ptr->next=node;
+            pq.pop();
             if(node->next)
-                pq.push({node->next->val,node->next});
+                 pq.push({node->next->val,node->next});
+            ptr=ptr->next;
         }
-        ListNode *head=node->next;
-        delete(node);
-        return head;
+
+
+        return head->next;
     }
 };
