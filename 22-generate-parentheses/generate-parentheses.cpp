@@ -1,21 +1,22 @@
 class Solution {
 public:
-    void solve(int i,int n,int ob,int cb,string subset,vector<string>&ans){
+    void solve(int ob,int cb,int n,string ss,vector<string >&ans){
         if(ob==n && cb==n){
-            ans.push_back(subset);
+            ans.push_back(ss);
             return;
         }
-        if(ob> n || cb>n)
+        if(ob>n || cb>n)
             return;
-        if(ob>cb){
-            solve(i+1,n,ob,cb+1,subset+')',ans);
+        
+        if(cb<ob){
+            solve(ob,cb+1,n,ss+')',ans);
         }
-        solve(i+1,n,ob+1,cb,subset+'(',ans);
+            solve(ob+1,cb,n,ss+'(',ans);
     }
     vector<string> generateParenthesis(int n) {
-        string subset="";
         vector<string>ans;
-        solve(0,n,0,0,subset,ans);
+        string ss;
+        solve(0,0,n,ss,ans);
         return ans;
     }
 };
