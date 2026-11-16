@@ -3,35 +3,38 @@ public:
     bool canPartition(vector<int>& nums) {
         int sum=0,n=nums.size();
 
-        for(auto num:nums)
-            sum+=num;
-
-        if(sum%2!=0)
-            return false;
-
-        int target=sum/2;
-
-        vector<vector<bool>>dp(n,vector<bool>(target+1,false));
-
         for(int i=0;i<n;i++)
-            dp[i][0]=true;
+            sum+=nums[i];
+        
+        int target;
+        if(sum%2==0)
+            target=sum/2;
+        else return false;
+
+        // vector<vector<bool>>dp(n,vector<bool>(target+1,false));
+        vector<bool>prev(target+1,false);
+        vector<bool>cur(target+1,false);
+
+            prev[0]=true;
 
         if(nums[0]<=target)
-            dp[0][nums[0]]=true;
+            prev[nums[0]]=true;
 
         for(int i=1;i<n;i++){
+            cur[0]=true;
             for(int j=1;j<=target;j++){
+                bool notTake=prev[j];
                 bool take=false;
-                bool notTake=dp[i-1][j];
+
 
                 if(j-nums[i]>=0)
-                    take=dp[i-1][j-nums[i]];
+                    take=prev[j-nums[i]];
 
-                dp[i][j]=take | notTake;
+                cur[j]=take | notTake;
             }
+            prev=cur;
         }
-
-        return dp[n-1][target];
-
+        
+        return cur[target];
     }
 };
